@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>首頁 | XXX 個人介紹與活動報名</title>
+    <title>關於我 | XXX 個人介紹</title>
     <style>
         :root {
             color-scheme: dark;
@@ -17,7 +17,6 @@
             --accent-cyan: #4dd8e6;
             --accent-blue: #5b8cff;
             --accent-purple: #8b5cf6;
-            --danger: #ff6b81;
             --border-subtle: #2a3040;
             --glow-cyan: rgba(77, 216, 230, 0.15);
             --font-sans: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -88,10 +87,19 @@
         .nav-links a.active { color: var(--text-primary); }
         .nav-links a.active::after { width: 100%; }
 
-        /* ===== 主視覺 ===== */
-        .main-content {
+        /* ===== 頁面標題 ===== */
+        .page-header { margin-bottom: 36px; }
+        .page-title {
+            font-size: 2.2rem; font-weight: 700; letter-spacing: 1px; line-height: 1.3;
+            background: linear-gradient(135deg, var(--text-primary) 40%, var(--accent-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .page-subtitle { margin-top: 8px; font-size: 0.95rem; color: var(--text-secondary); letter-spacing: 0.3px; }
+
+        /* ===== 關於我版面 ===== */
+        .about-layout {
             display: flex; gap: 50px; align-items: flex-start;
-            flex-wrap: wrap; margin-bottom: 60px;
+            flex-wrap: wrap; margin-bottom: 80px;
         }
         .profile-section {
             flex: 0 0 280px; display: flex; flex-direction: column;
@@ -140,7 +148,7 @@
         }
         .avatar-container:hover .avatar-text { color: var(--text-secondary); }
 
-        .intro-section { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 22px; }
+        .about-content { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 26px; }
         .intro-header { display: flex; flex-direction: column; gap: 6px; }
         .intro-greeting {
             font-size: 0.85rem; color: var(--accent-cyan);
@@ -167,50 +175,12 @@
         }
         .divider { height: 1px; background: linear-gradient(to right, var(--border-subtle), transparent); width: 100%; }
 
-        .bio-text { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.9; letter-spacing: 0.3px; }
-        .bio-text p + p { margin-top: 14px; }
-        .bio-text .highlight { color: var(--accent-cyan); font-weight: 500; }
-        .bio-text .highlight-blue { color: var(--accent-blue); font-weight: 500; }
-
-        .skills-section { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; }
-        .skill-pill {
-            padding: 8px 18px; border-radius: 25px; font-size: 0.8rem; font-weight: 500;
-            letter-spacing: 0.5px; background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle); color: var(--text-secondary);
-            transition: all 0.3s ease; cursor: default;
-        }
-        .skill-pill:hover {
-            border-color: var(--accent-cyan); color: var(--text-primary);
-            background: rgba(77, 216, 230, 0.1);
-            box-shadow: 0 0 20px rgba(77, 216, 230, 0.1); transform: translateY(-2px);
-        }
-
-        .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
-        a.btn-submit, a.btn-reset { display: inline-block; text-decoration: none; text-align: center; }
-        .btn-submit, .btn-reset {
-            font-family: inherit; font-size: 0.9rem; font-weight: 600; letter-spacing: 1px;
-            border-radius: 25px; padding: 12px 32px; cursor: pointer; transition: all 0.3s ease;
-        }
-        .btn-submit {
-            border: none;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            color: #0d0f14;
-        }
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px var(--glow-cyan), 0 0 40px rgba(91, 140, 255, 0.2);
-        }
-        .btn-reset { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); }
-        .btn-reset:hover { border-color: var(--accent-purple); color: var(--text-primary); transform: translateY(-2px); }
-        .btn-submit:focus-visible, .btn-reset:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 3px; }
-
-        /* ===== 卡片 ===== */
-        .form-card {
+        .bio-card {
             background: var(--bg-card); border: 1px solid var(--border-subtle);
             border-radius: 16px; padding: 28px 30px;
             transition: all 0.4s ease; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
-        .form-card:hover {
+        .bio-card:hover {
             border-color: rgba(77, 216, 230, 0.3);
             box-shadow: 0 8px 35px rgba(0, 0, 0, 0.35), 0 0 50px var(--glow-cyan);
             transform: translateY(-3px);
@@ -224,54 +194,37 @@
             content: ''; display: inline-block; width: 4px; height: 20px; border-radius: 4px;
             background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-blue));
         }
-        .form-section { margin-bottom: 80px; }
-        .form-hint { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 26px; letter-spacing: 0.3px; }
-        .required { color: var(--accent-cyan); font-weight: 700; }
+        .bio-text { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.9; letter-spacing: 0.3px; }
+        .bio-text p + p { margin-top: 14px; }
+        .bio-text .highlight { color: var(--accent-cyan); font-weight: 500; }
+        .bio-text .highlight-blue { color: var(--accent-blue); font-weight: 500; }
 
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-        .form-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-        .form-grid .form-field { margin-bottom: 0; }
-        .form-field label, .form-fieldset legend {
-            font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.5px;
+        .skills-section { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; list-style: none; }
+        .skill-pill {
+            padding: 8px 18px; border-radius: 25px; font-size: 0.8rem; font-weight: 500;
+            letter-spacing: 0.5px; background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle); color: var(--text-secondary);
+            transition: all 0.3s ease; cursor: default;
         }
-        .signup-form input:not([type="radio"]):not([type="checkbox"]),
-        .signup-form select, .signup-form textarea {
-            width: 100%; font-family: inherit; font-size: 0.9rem; color: var(--text-primary);
-            background: var(--bg-secondary); border: 1px solid var(--border-subtle);
-            border-radius: 10px; padding: 12px 14px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        .skill-pill:hover {
+            border-color: var(--accent-cyan); color: var(--text-primary);
+            background: rgba(77, 216, 230, 0.1);
+            box-shadow: 0 0 20px rgba(77, 216, 230, 0.1); transform: translateY(-2px);
         }
-        .signup-form select {
-            appearance: none; -webkit-appearance: none; padding-right: 40px;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239aa3b5' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 14px center; cursor: pointer;
-        }
-        .signup-form textarea { resize: vertical; min-height: 110px; line-height: 1.7; }
-        .signup-form ::placeholder { color: var(--text-muted); opacity: 0.85; }
-        .signup-form input:focus, .signup-form select:focus, .signup-form textarea:focus {
-            outline: none; border-color: var(--accent-cyan);
-            background: var(--bg-card-hover); box-shadow: 0 0 0 3px rgba(77, 216, 230, 0.12);
-        }
-        .signup-form :is(input, select, textarea):user-invalid {
-            border-color: var(--danger); box-shadow: 0 0 0 3px rgba(255, 107, 129, 0.12);
-        }
-        .form-fieldset {
+
+        .stats-row { display: flex; gap: 16px; flex-wrap: wrap; }
+        .stat-item {
+            flex: 1; min-width: 100px; background: var(--bg-secondary);
             border: 1px solid var(--border-subtle); border-radius: 12px;
-            background: var(--bg-secondary); padding: 16px 20px 18px; margin-bottom: 20px;
+            padding: 16px 20px; text-align: center; transition: all 0.3s ease;
         }
-        .form-fieldset legend { padding: 0 8px; font-weight: 600; color: var(--text-secondary); }
-        .option-group { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 6px; }
-        .option-group label, .checkbox-line {
-            display: flex; align-items: center; gap: 8px; font-size: 0.85rem;
-            color: var(--text-secondary); cursor: pointer; transition: color 0.3s ease;
+        .stat-item:hover {
+            border-color: var(--accent-purple); background: var(--bg-card-hover); transform: translateY(-2px);
         }
-        .option-group label:hover, .checkbox-line:hover { color: var(--text-primary); }
-        .signup-form input[type="radio"], .signup-form input[type="checkbox"] {
-            width: 16px; height: 16px; accent-color: var(--accent-cyan); cursor: pointer; flex-shrink: 0;
-        }
-        .form-actions {
-            display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-            margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--border-subtle);
+        .stat-number { font-size: 1.6rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
+        .stat-label {
+            font-size: 0.75rem; color: var(--text-muted);
+            letter-spacing: 1px; text-transform: uppercase; margin-top: 2px;
         }
 
         /* ===== 頁腳 ===== */
@@ -290,18 +243,17 @@
 
         /* ===== RWD ===== */
         @media (max-width: 768px) {
-            .main-content { flex-direction: column; align-items: center; gap: 30px; }
+            .about-layout { flex-direction: column; align-items: center; gap: 30px; }
             .profile-section { flex: 0 0 auto; }
             .avatar-container { width: 220px; height: 220px; }
             .avatar-icon { width: 56px; height: 56px; }
             .avatar-icon svg { width: 28px; height: 28px; }
             .intro-name { font-size: 2rem; }
+            .page-title { font-size: 1.7rem; }
             .navbar { flex-direction: column; align-items: center; gap: 16px; }
             .nav-links { gap: 16px; flex-wrap: wrap; justify-content: center; }
-            .form-card { padding: 20px; }
-            .form-actions { flex-direction: column-reverse; align-items: stretch; }
-            .btn-submit, .btn-reset { width: 100%; text-align: center; }
-            .hero-actions { flex-direction: column; align-items: stretch; }
+            .bio-card { padding: 20px; }
+            .stats-row { flex-direction: column; }
             .site-footer { flex-direction: column; text-align: center; }
         }
     </style>
@@ -316,8 +268,8 @@
                     <span class="nav-name">XXX</span>
                 </a>
                 <ul class="nav-links">
-                    <li><a href="index.html" class="active" aria-current="page">首頁</a></li>
-                    <li><a href="aboutme.html">關於我</a></li>
+                    <li><a href="index.html">首頁</a></li>
+                    <li><a href="aboutme.html" class="active" aria-current="page">關於我</a></li>
                     <li><a href="contact.html">聯絡我</a></li>
                 </ul>
             </nav>
@@ -327,8 +279,12 @@
     <main id="top">
         <div class="container">
 
-            <!-- ===== 首頁主視覺 ===== -->
-            <section class="main-content" aria-labelledby="profile-name">
+            <div class="page-header">
+                <h1 class="page-title">關於我</h1>
+                <p class="page-subtitle">更深入了解我的背景、興趣與學習歷程</p>
+            </div>
+
+            <article class="about-layout" aria-labelledby="profile-name">
 
                 <figure class="profile-section">
                     <div class="avatar-container" role="img" aria-label="個人頭像預留位置，點擊可上傳大頭貼" title="點擊上傳大頭貼">
@@ -345,10 +301,10 @@
                     <figcaption class="visually-hidden">個人頭像</figcaption>
                 </figure>
 
-                <div class="intro-section">
+                <section class="about-content" aria-labelledby="profile-name">
                     <header class="intro-header">
-                        <p class="intro-greeting">Hello, 我是</p>
-                        <h1 class="intro-name" id="profile-name">XXX</h1>
+                        <p class="intro-greeting">About Me</p>
+                        <h2 class="intro-name" id="profile-name">XXX</h2>
                         <p class="intro-school">
                             <span class="school-badge" aria-hidden="true"></span>
                             國立勤益科技大學 · 大二學生
@@ -357,122 +313,60 @@
 
                     <div class="divider" role="presentation"></div>
 
-                    <div class="bio-text">
-                        <p>
-                            你好！我是<span class="highlight">XXX</span>，目前就讀於
-                            <span class="highlight-blue">國立勤益科技大學</span>。
-                            我對<span class="highlight">科技與設計的結合</span>充滿熱情，
-                            喜歡探索新事物，並在學習中不斷挑戰自我。
-                        </p>
-                        <p>
-                            想更認識我嗎？歡迎前往「關於我」頁面，
-                            或直接填寫下方的活動報名表，一起來交流！
-                        </p>
-                    </div>
-
-                    <ul class="skills-section" aria-label="個人特質與技能">
-                        <li class="skill-pill">💡 好奇心</li>
-                        <li class="skill-pill">🤝 團隊協作</li>
-                        <li class="skill-pill">📚 自主學習</li>
-                        <li class="skill-pill">🎯 目標導向</li>
-                        <li class="skill-pill">🌱 成長心態</li>
-                    </ul>
-
-                    <div class="hero-actions">
-                        <a class="btn-submit" href="aboutme.html">認識更多</a>
-                        <a class="btn-reset" href="contact.html">聯絡我</a>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ===== 報名表單 ===== -->
-            <section class="form-section" id="signup" aria-labelledby="signup-title">
-                <div class="form-card">
-                    <h2 class="bio-card-title" id="signup-title">活動報名表</h2>
-                    <p class="form-hint">
-                        填寫以下資料即可完成報名，標示
-                        <span class="required" aria-hidden="true">*</span>
-                        <span class="visually-hidden">（必填）</span>
-                        的欄位為必填。
-                    </p>
-
-                    <form class="signup-form" action="#" method="post">
-                        <div class="form-grid">
-                            <div class="form-field">
-                                <label for="name">姓名 <span class="required" aria-hidden="true">*</span></label>
-                                <input type="text" id="name" name="name" placeholder="請輸入你的姓名" autocomplete="name" required>
-                            </div>
-                            <div class="form-field">
-                                <label for="email">電子郵件 <span class="required" aria-hidden="true">*</span></label>
-                                <input type="email" id="email" name="email" placeholder="example@mail.com" autocomplete="email" required>
-                            </div>
-                            <div class="form-field">
-                                <label for="session">報名場次 <span class="required" aria-hidden="true">*</span></label>
-                                <select id="session" name="session" required>
-                                    <option value="">請選擇場次</option>
-                                    <option value="morning">上午場 09:00 – 12:00</option>
-                                    <option value="afternoon">下午場 13:30 – 16:30</option>
-                                    <option value="evening">晚間場 18:30 – 21:00</option>
-                                </select>
-                            </div>
-                            <div class="form-field">
-                                <label for="phone">聯絡電話</label>
-                                <input type="tel" id="phone" name="phone" placeholder="0912-345-678" autocomplete="tel">
-                            </div>
-                            <div class="form-field">
-                                <label for="school">就讀學校 / 單位</label>
-                                <input type="text" id="school" name="school" placeholder="國立勤益科技大學">
-                            </div>
-                            <div class="form-field">
-                                <label for="attendees">參加人數</label>
-                                <input type="number" id="attendees" name="attendees" min="1" max="10" step="1" value="1">
-                            </div>
+                    <section class="bio-card" aria-labelledby="bio-title">
+                        <h3 class="bio-card-title" id="bio-title">自我介紹</h3>
+                        <div class="bio-text">
+                            <p>
+                                你好！我是<span class="highlight">XXX</span>，目前就讀於
+                                <span class="highlight-blue">國立勤益科技大學</span>，是一名大二學生。
+                                我對於<span class="highlight">科技與設計的結合</span>充滿熱情，
+                                喜歡探索新事物，並且在學習的過程中不斷挑戰自我。
+                            </p>
+                            <p>
+                                在大學生活中，我積極參與各種活動與專案，
+                                培養了<span class="highlight-blue">團隊合作</span>與
+                                <span class="highlight">解決問題</span>的能力。
+                                我相信持續學習與保持好奇心是成長的關鍵，
+                                也期待在未來的日子裡，能將所學應用於實際，
+                                創造更多價值。
+                            </p>
+                            <p>
+                                課餘時間，我喜歡閱讀、運動以及研究感興趣的技術領域，
+                                不斷充實自己。如果你也對科技、設計或任何有趣的事物感興趣，
+                                歡迎與我交流！
+                            </p>
                         </div>
 
-                        <fieldset class="form-fieldset">
-                            <legend>飲食習慣</legend>
-                            <div class="option-group">
-                                <label for="meal-none"><input type="radio" id="meal-none" name="meal" value="none" checked>不需要餐點</label>
-                                <label for="meal-veg"><input type="radio" id="meal-veg" name="meal" value="vegetarian">素食</label>
-                                <label for="meal-meat"><input type="radio" id="meal-meat" name="meal" value="meat">葷食</label>
-                            </div>
-                        </fieldset>
+                        <ul class="skills-section" aria-label="個人特質與技能">
+                            <li class="skill-pill">💡 好奇心</li>
+                            <li class="skill-pill">🤝 團隊協作</li>
+                            <li class="skill-pill">📚 自主學習</li>
+                            <li class="skill-pill">🎯 目標導向</li>
+                            <li class="skill-pill">🌱 成長心態</li>
+                        </ul>
+                    </section>
 
-                        <fieldset class="form-fieldset">
-                            <legend>如何得知本活動？（可複選）</legend>
-                            <div class="option-group">
-                                <label for="source-friend"><input type="checkbox" id="source-friend" name="source" value="friend">朋友介紹</label>
-                                <label for="source-school"><input type="checkbox" id="source-school" name="source" value="school">校園公告</label>
-                                <label for="source-social"><input type="checkbox" id="source-social" name="source" value="social">社群媒體</label>
-                                <label for="source-other"><input type="checkbox" id="source-other" name="source" value="other">其他</label>
-                            </div>
-                        </fieldset>
-
-                        <div class="form-field">
-                            <label for="note">其他備註</label>
-                            <textarea id="note" name="note" rows="4" placeholder="有任何問題、特殊需求或想對我說的話，都歡迎寫在這裡"></textarea>
+                    <section class="stats-row" aria-label="個人小檔案">
+                        <div class="stat-item">
+                            <div class="stat-number">2</div>
+                            <div class="stat-label">年級</div>
                         </div>
-
-                        <div class="form-field">
-                            <label class="checkbox-line" for="agree">
-                                <input type="checkbox" id="agree" name="agree" required>
-                                我已閱讀並同意個資使用聲明
-                                <span class="required" aria-hidden="true">*</span>
-                            </label>
+                        <div class="stat-item">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">學習熱情</div>
                         </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn-submit">送出報名</button>
-                            <button type="reset" class="btn-reset">重設欄位</button>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">保持好奇</div>
                         </div>
-                    </form>
-                </div>
-            </section>
+                    </section>
+                </section>
+            </article>
 
         </div>
     </main>
 
-    <footer class="site-footer" id="contact">
+    <footer class="site-footer">
         <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
             <p class="footer-text">© 2025 XXX | 國立勤益科技大學</p>
             <ul class="footer-socials">
