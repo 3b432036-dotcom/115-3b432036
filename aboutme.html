@@ -242,20 +242,79 @@
         .footer-socials a:hover, .footer-socials a:focus-visible { color: var(--accent-cyan); }
 
         /* ===== RWD ===== */
-        @media (max-width: 768px) {
-            .about-layout { flex-direction: column; align-items: center; gap: 30px; }
-            .profile-section { flex: 0 0 auto; }
-            .avatar-container { width: 220px; height: 220px; }
-            .avatar-icon { width: 56px; height: 56px; }
-            .avatar-icon svg { width: 28px; height: 28px; }
-            .intro-name { font-size: 2rem; }
-            .page-title { font-size: 1.7rem; }
-            .navbar { flex-direction: column; align-items: center; gap: 16px; }
-            .nav-links { gap: 16px; flex-wrap: wrap; justify-content: center; }
-            .bio-card { padding: 20px; }
-            .stats-row { flex-direction: column; }
-            .site-footer { flex-direction: column; text-align: center; }
-        }
+        /* ===== RWD ===== */
+@media (max-width: 768px) {
+
+    /* 主視覺：橫向排列 → 直向堆疊 */
+    .main-content {
+        flex-direction: column;   /* 改為直向堆疊 */
+        align-items: center;      /* 讓每個區塊水平置中 */
+        gap: 16px;                /* 維持 16px 間距 */
+    }
+
+    /* 頭像區塊：桌機的固定 280px 寬在手機上改為自動 */
+    .profile-section {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    /* 自我介紹區塊：取消桌機的 flex: 1，改為撐滿容器 */
+    .intro-section {
+        flex: 0 0 auto;
+        width: 100%;
+        min-width: 0;             /* 避免內容溢出時把容器撐開 */
+        text-align: center;       /* 手機版置中比較好看（可選） */
+        align-items: center;      /* 讓內部 flex 子項也置中 */
+    }
+
+    /* 頭像尺寸微調 */
+    .avatar-container { width: 220px; height: 220px; }
+    .avatar-icon { width: 56px; height: 56px; }
+    .avatar-icon svg { width: 28px; height: 28px; }
+
+    /* 標題字級調整 */
+    .intro-name { font-size: 2rem; }
+
+    /* 導覽列改為直向 */
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+    .nav-links {
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* 表單與按鈕 */
+    .form-card { padding: 20px; }
+    .form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+    .btn-submit, .btn-reset {
+        width: 100%;
+        text-align: center;
+    }
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    /* 技能標籤置中 */
+    .skills-section {
+        justify-content: center;
+    }
+
+    /* 頁腳 */
+    .site-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+}
     </style>
 </head>
 <body>
