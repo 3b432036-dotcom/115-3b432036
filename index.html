@@ -208,6 +208,22 @@
         .btn-reset:hover { border-color: var(--accent-purple); color: var(--text-primary); transform: translateY(-2px); }
         .btn-submit:focus-visible, .btn-reset:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 3px; }
 
+        /* 送出後鎖定：背景變灰、不可再點擊 */
+        .btn-submit:disabled,
+        .btn-submit.is-submitted {
+            background: #3a4152;
+            color: #8b93a5;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            opacity: 0.85;
+        }
+        .btn-submit:disabled:hover,
+        .btn-submit.is-submitted:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
         /* ===== 卡片 ===== */
         .form-card {
             background: var(--bg-card); border: 1px solid var(--border-subtle);
@@ -259,6 +275,29 @@
         .signup-form :is(input, select, textarea):user-invalid {
             border-color: var(--danger); box-shadow: 0 0 0 3px rgba(255, 107, 129, 0.12);
         }
+
+        /* ===== 即時驗證錯誤提示 ===== */
+        .signup-form input.input-error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(255, 107, 129, 0.12);
+        }
+        .signup-form input.input-error:focus {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(255, 107, 129, 0.2);
+        }
+        .field-error {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.8rem; font-weight: 500;
+            color: var(--danger); letter-spacing: 0.3px;
+            line-height: 1.5;
+        }
+        .field-error::before {
+            content: '⚠';
+            font-size: 0.85rem;
+            line-height: 1;
+        }
+        .field-error[hidden] { display: none; }
+
         .form-fieldset {
             border: 1px solid var(--border-subtle); border-radius: 12px;
             background: var(--bg-secondary); padding: 16px 20px 18px; margin-bottom: 20px;
@@ -404,7 +443,8 @@
                         的欄位為必填。
                     </p>
 
-                    <form class="signup-form" action="#" method="post">
+                    <!-- novalidate：交由自訂 JS 統一驗證，才能同時顯示紅色提示 -->
+                    <form class="signup-form" action="#" method="post" novalidate>
                         <div class="form-grid">
                             <div class="form-field">
                                 <label for="name">姓名 <span class="required" aria-hidden="true">*</span></label>
@@ -412,7 +452,9 @@
                             </div>
                             <div class="form-field">
                                 <label for="email">電子郵件 <span class="required" aria-hidden="true">*</span></label>
-                                <input type="email" id="email" name="email" placeholder="example@mail.com" autocomplete="email" required>
+                                <input type="email" id="email" name="email" placeholder="example@mail.com"
+                                       autocomplete="email" required aria-describedby="email-error">
+                                <p class="field-error" id="email-error" role="alert" hidden></p>
                             </div>
                             <div class="form-field">
                                 <label for="session">報名場次 <span class="required" aria-hidden="true">*</span></label>
@@ -534,6 +576,119 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         }
+    });
+})();
+</script>
+
+<script>
+/* =========================================================
+   活動報名表：
+   1. 電子郵件即時驗證（格式錯誤顯示紅色提示，正確則消失）
+   2. 送出後將按鈕變灰並鎖定，無法再次點擊
+   ========================================================= */
+(function () {
+    'use strict';
+
+    var form = document.querySelector('.signup-form');
+    if (!form) return;
+
+    var emailInput = document.getElementById('email');
+    var emailError = document.getElementById('email-error');
+    var submitBtn  = form.querySelector('button[type="submit"]');
+
+    // 電子郵件格式：xxx@yyy.zz（不允許空白，網域需有小數點與至少 2 字元結尾）
+    var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    function isValidEmail(value) {
+        return EMAIL_PATTERN.test(value);
+    }
+
+    /**
+     * 顯示 / 隱藏錯誤提示
+     * @param {boolean} show
+     * @param {string} [message]
+     */
+    function setEmailError(show, message) {
+        if (show) {
+            emailError.textContent = message || '電子郵件格式不正確，請輸入如 example@mail.com 的格式';
+            emailError.hidden = false;
+            emailInput.classList.add('input-error');
+            emailInput.setAttribute('aria-invalid', 'true');
+        } else {
+            emailError.hidden = true;
+            emailInput.classList.remove('input-error');
+            emailInput.removeAttribute('aria-invalid');
+        }
+    }
+
+    /**
+     * 檢查電子郵件欄位
+     * @param {boolean} force 是否連「空白」也顯示提示（送出時使用）
+     * @returns {boolean} 是否通過驗證
+     */
+    function checkEmail(force) {
+        var value = emailInput.value.trim();
+
+        if (value === '') {
+            if (force) {
+                setEmailError(true, '請填寫電子郵件欄位');
+            } else {
+                setEmailError(false); // 尚未輸入時不顯示紅字
+            }
+            return false;
+        }
+
+        if (!isValidEmail(value)) {
+            setEmailError(true, '電子郵件格式不正確，請輸入如 example@mail.com 的格式');
+            return false;
+        }
+
+        setEmailError(false); // 格式正確 → 提示消失
+        return true;
+    }
+
+    /* ---------- 即時驗證：輸入時 + 離開欄位時 ---------- */
+    emailInput.addEventListener('input', function () {
+        checkEmail(false);
+    });
+
+    emailInput.addEventListener('blur', function () {
+        checkEmail(false);
+    });
+
+    /* ---------- 送出報名 ---------- */
+    form.addEventListener('submit', function (e) {
+        // 範例頁面：不實際送出，避免 action="#" 造成頁面重載
+        e.preventDefault();
+
+        // 1. 先做電子郵件驗證（此時強制顯示提示）
+        var emailOk = checkEmail(true);
+
+        // 2. 其他欄位交給瀏覽器原生驗證
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            if (!emailOk) emailInput.focus();
+            return;
+        }
+
+        // 3. 驗證全數通過 → 鎖定送出按鈕（變灰、不可再點）
+        submitBtn.disabled = true;
+        submitBtn.classList.add('is-submitted');
+        submitBtn.textContent = '已送出報名';
+        submitBtn.setAttribute('aria-disabled', 'true');
+
+        // 若之後要串接後端，可在此改用 fetch / form.submit()
+        // 例如：form.submit();
+    });
+
+    /* ---------- 重設時，一併清除錯誤狀態與按鈕鎖定 ---------- */
+    form.addEventListener('reset', function () {
+        setEmailError(false);
+
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('is-submitted');
+        submitBtn.removeAttribute('aria-disabled');
+        submitBtn.textContent = '送出報名';
     });
 })();
 </script>
